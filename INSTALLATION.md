@@ -5,7 +5,7 @@
 
 #### Minimum Requirements
 - **Operating System**: Windows 10/11, macOS 10.15+, Linux (Ubuntu 18+)
-- **Node.js**: Version 20.0 or higher
+- **Node.js**: 20.19+ within the 20.x line, or 22.12+ (`^20.19.0 || >=22.12.0`)
 - **RAM**: Minimum 4GB, recommended 8GB+
 - **Disk Space**: 1GB for the project + dependencies
 
@@ -38,7 +38,10 @@ npm install
 yarn install
 ```
 
-#### Step 3: Database Setup (Optional)
+#### Step 3: Understand Storage
+The current application uses in-memory storage (`MemStorage`); records are lost when the server restarts. Drizzle schema tooling is included, but PostgreSQL persistence is not wired into the default runtime.
+
+For schema development only, configure `DATABASE_URL` for a PostgreSQL instance before using the optional command below:
 ```bash
 # Create and set up the database
 npm run db:push
@@ -67,44 +70,25 @@ npm run build
 npm start
 ```
 
-#### Docker (if installed)
-```bash
-# Build Docker image
-docker build -t anti-phishing-tool .
-
-# Run the container
-docker run -p 5000:5000 anti-phishing-tool
-```
+#### Docker
+A Dockerfile is not included. Create and validate a container configuration before using Docker; the Node.js commands above are the supported local start procedure.
 
 ### 🔧 Configuration
 
-#### `.env` File (Optional)
-Create a `.env` file in the root of the project to configure environment variables:
+#### Environment and Storage
+The current application uses in-memory storage (`MemStorage`); records are lost when the server restarts. Drizzle schema tooling is included, but PostgreSQL persistence is not wired into the default runtime.
+
+`DATABASE_URL` is for optional Drizzle tooling. The current server listens on port 5000; `PORT` and `ENABLE_CORS` are not runtime settings implemented by this version.
 
 ```env
 # Database settings
 DATABASE_URL=postgresql://user:password@localhost:5432/antiphishing
 
-# Server settings
-PORT=5000
 NODE_ENV=development
-
-# Security settings
-ENABLE_CORS=true
 ```
 
 #### Proxy Setup (Optional)
-To use a proxy, create a `proxy-config.json` file:
-
-```json
-{
-  "proxies": [
-    "http://proxy1.example.com:8080",
-    "http://proxy2.example.com:8080"
-  ],
-  "rotation": "random"
-}
-```
+Select the custom proxy option in the application and enter its URL. The current sender uses that custom proxy setting; it does not read a `proxy-config.json` file.
 
 ### ❗ Troubleshooting
 
@@ -131,18 +115,17 @@ lsof -i :5000
 # Kill the process (replace PID with the actual process ID)
 kill -9 PID
 
-# Or use a different port
-PORT=3000 npm run dev
+# The current server uses port 5000. To change it, update server/index.ts.
 ```
 
 #### Issue: WebSocket not connecting
 **Solution**:
 1. Check firewall settings
-2. Temporarily disable antivirus
+2. Check the browser console and whether the local WebSocket connection is being blocked
 3. Try a different browser
 
-#### Issue: Database not connecting
-**Solution**:
+#### Issue: Optional Drizzle schema command cannot connect
+This affects database tooling, not the default in-memory application. Check the PostgreSQL instance referenced by `DATABASE_URL`:
 ```bash
 # Check PostgreSQL status
 sudo systemctl status postgresql
@@ -165,7 +148,7 @@ sudo ufw allow from 127.0.0.1 to any port 5000
 #### Browser Settings
 1. Enable JavaScript
 2. Allow WebSocket connections
-3. Disable mixed content blocking (if using HTTP)
+3. Open the frontend and API through the same local origin so WebSocket requests use the matching protocol
 
 ### 📊 Verifying Functionality
 
@@ -204,7 +187,7 @@ Check the logs in the browser console (F12) and in the terminal where the server
 #### Documentation
 - `README.md` - Main documentation
 - `API.md` - API documentation
-- `TROUBLESHOOTING.md` - Detailed troubleshooting guide
+- The Troubleshooting section above - Common setup problems
 
 #### Contact
 If issues arise:
@@ -214,41 +197,15 @@ If issues arise:
 
 ---
 
-### 🌍 Deployment on Free Platforms
+### 🌍 Deployment
 
-#### Railway Deployment
+Use a host that supports the required Node.js version. Build with `npm run build` and start with `npm start`.
 
-1. **Create a Railway account**: Go to [https://railway.app](https://railway.app) and create an account.
-2. **Create a new project**: Select "New Project" and connect to your GitHub repository containing the tool.
-3. **Set environment variables**:
-   - Go to your Railway project settings.
-   - Add the following environment variables:
-     - `DATABASE_URL=postgresql://user:password@localhost:5432/antiphishing`
-     - `PORT=5000`
-4. **Deploy**: Railway will automatically deploy the application once connected. Your app will be available at the provided Railway URL.
-   
-#### Render Deployment
+- The current server listens on port **5000**. Configure the host to route to that port. A platform that requires its assigned `PORT` value needs a server configuration change first.
+- Storage is in memory. A restart or redeployment clears runtime records; setting `DATABASE_URL` does not add persistence.
+- Drizzle schema tools are available for development, but a persistent storage implementation must be connected before relying on PostgreSQL.
 
-1. **Create a Render account**: Go to [https://render.com](https://render.com) and create an account.
-2. **Create a new Web Service**:
-   - Select the Node.js option.
-   - Connect your GitHub repository with the project.
-3. **Set environment variables** in the Render dashboard, similar to the Railway setup.
-4. **Deploy**: Render will deploy the application and provide a public URL.
-
-#### Heroku Deployment
-
-1. **Create a Heroku account**: Go to [https://www.heroku.com](https://www.heroku.com) and sign up.
-2. **Install the Heroku CLI**: Follow the instructions [here](https://devcenter.heroku.com/articles/heroku-cli).
-3. **Deploy with Heroku**:
-   - Initialize a git repository if not already done: `git init`
-   - Commit your changes: `git commit -m "Initial commit"`
-   - Create a new Heroku app: `heroku create`
-   - Push the code to Heroku: `git push heroku master`
-4. **Set environment variables**:
-   - `heroku config:set DATABASE_URL=postgresql://user:password@localhost:5432/antiphishing`
-   - `heroku config:set PORT=5000`
-5. **Access the app**: Once the deployment is finished, your app will be accessible at the Heroku URL provided.
+Consult the platform's current deployment documentation and pricing: [Railway](https://docs.railway.com/), [Render](https://render.com/docs), or [Heroku](https://devcenter.heroku.com/).
 
 ---
 

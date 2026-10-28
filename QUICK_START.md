@@ -1,6 +1,9 @@
 # ⚡ Quick Start
 ## Anti-Phishing Research Tool
 
+> The current application uses in-memory storage (`MemStorage`); records are lost when the server restarts. Drizzle schema tooling is included, but PostgreSQL persistence is not wired into the default runtime.
+
+
 ### 🚀 Launch in 3 Minutes
 
 ### 1️⃣ Unpack the Archive

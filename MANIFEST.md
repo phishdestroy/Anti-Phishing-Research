@@ -1,6 +1,9 @@
 # 📦 Archive Contents
 ## Anti-Phishing Research Tool v1.0
 
+> The current application uses in-memory storage (`MemStorage`); records are lost when the server restarts. Drizzle schema tooling is included, but PostgreSQL persistence is not wired into the default runtime.
+
+
 ### 📁 Archive Structure
 
 ```
@@ -73,7 +76,7 @@ anti-phishing-tool.tar.gz
 ### 📋 Installation Checklist
 
 #### ✅ Prerequisites
-- [ ] Node.js 20+ installed
+- [ ] Node.js 20.19+ (20.x) or 22.12+ installed
 - [ ] npm or yarn available
 - [ ] Port 5000 is free
 - [ ] Browser supports WebSocket

@@ -35,7 +35,7 @@ A professional security research tool designed for testing anti-phishing measure
 ## 🚀 Quick Start
 
 ### System Requirements
-- Node.js 20+
+- Node.js 20.19+ (20.x) or 22.12+
 - npm or yarn
 
 ### Installation and Launch
@@ -118,7 +118,7 @@ Check the results in the log panel:
 ### Backend (Express.js + TypeScript)
 - **Framework**: Express.js with TypeScript
 - **WebSocket**: For real-time log streaming
-- **Database**: PostgreSQL with Drizzle ORM
+- **Storage**: In-memory storage by default. Drizzle schema tooling is included for development.
 - **Architecture**: Service-oriented architecture
 
 ### Key Services
@@ -150,14 +150,16 @@ anti-phishing-tool/
 
 ## 🔧 Configuration
 
-### Environment Variables
-Create a `.env` file in the root of the project:
+The current application uses in-memory storage (`MemStorage`); records are lost when the server restarts. Drizzle schema tooling is included, but PostgreSQL persistence is not wired into the default runtime.
+
+### Optional Database Tooling
+`DATABASE_URL` is used by the Drizzle schema tools. Setting it does not switch the application from in-memory storage:
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/antiphishing
 NODE_ENV=development
 ```
 
-### Database Setup
+### Schema Setup (Optional Development Tooling)
 ```bash
 # Synchronize the database schema
 npm run db:push
