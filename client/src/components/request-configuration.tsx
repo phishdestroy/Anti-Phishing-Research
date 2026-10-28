@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { requestConfigSchema, type RequestConfig } from '@shared/schema';
+import { requestConfigSchema, type RequestConfig, type RequestConfigInput } from '@shared/schema';
 
 interface RequestConfigurationProps {
   onConfigChange: (config: RequestConfig) => void;
@@ -20,7 +20,7 @@ interface RequestConfigurationProps {
 export function RequestConfiguration({ onConfigChange, isProcessing }: RequestConfigurationProps) {
   const { toast } = useToast();
   
-  const form = useForm<RequestConfig>({
+  const form = useForm<RequestConfigInput, unknown, RequestConfig>({
     resolver: zodResolver(requestConfigSchema),
     defaultValues: {
       url: '',
@@ -52,9 +52,9 @@ export function RequestConfiguration({ onConfigChange, isProcessing }: RequestCo
   };
 
   const handleFormChange = () => {
-    const values = form.getValues();
-    if (form.formState.isValid) {
-      onConfigChange(values);
+    const result = requestConfigSchema.safeParse(form.getValues());
+    if (form.formState.isValid && result.success) {
+      onConfigChange(result.data);
     }
   };
 

@@ -88,3 +88,4 @@ export type Variable = typeof variables.$inferSelect;
 export type InsertVariable = z.infer<typeof insertVariableSchema>;
 
 export type RequestConfig = z.infer<typeof requestConfigSchema>;
+export type RequestConfigInput = z.input<typeof requestConfigSchema>;
